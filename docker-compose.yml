@@ -1,0 +1,56 @@
+version: '3.5'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: ["docker/app.sh"]
+    restart: always
+    volumes:
+      - store_back:/backend:rw
+    networks:
+      - prod
+    ports:
+      - 8000:8000
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - backend/.env
+    container_name: postgres
+    networks:
+      - prod
+    ports:
+      - '5432:5432'
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}" ]
+
+  frontend-prod:
+    build:
+      context: ./front/neon
+      dockerfile: Dockerfile
+    container_name: "frontend"
+    restart: always
+    volumes:
+      - static_volume:/home/app/web/api/static
+    networks:
+      - prod
+    ports:
+      - 80:80
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  static_volume:
+  store_back:
+
+networks:
+  prod:
