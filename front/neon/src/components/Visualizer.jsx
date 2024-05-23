@@ -27,8 +27,8 @@ const Visualizer = (props) => {
 
   const mutePlay = () => {
     if (!gainNode.gain.value) {
-      gainNode.gain.value = 1;
-      gainNodeRef.current = 1;
+      gainNode.gain.value = 0.7;
+      gainNodeRef.current = 0.7;
       if (source.buffer) {
         setSound(!sound);
       }
@@ -43,8 +43,8 @@ const Visualizer = (props) => {
 
   const start = () => {
     context.resume();
-    gainNode.gain.value = 1;
-    gainNodeRef.current = 1;
+    gainNode.gain.value = 0.7;
+    gainNodeRef.current = 0.7;
     setStartRadio(false);
   };
 

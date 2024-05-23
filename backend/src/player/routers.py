@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, UploadFile, File
+from fastapi import APIRouter, Depends, UploadFile, File, BackgroundTasks
 from player.service import Player
 
 player_router = APIRouter(tags=["player"])
@@ -10,8 +10,8 @@ async def add_track(menu: Player = Depends(), file: UploadFile = File(...)):
 
 
 @player_router.get('/start_player')
-async def start_player(menu: Player = Depends()):
-    return await menu.start_player()
+async def thread_start_player(background_tasks: BackgroundTasks, menu: Player = Depends()):
+    return background_tasks.add_task(menu.thread_start_player())
 
 
 @player_router.get('/get_track/{track}')
